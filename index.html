@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Staff Access</title>
+
+<style>
+  body {
+    font-family: Arial;
+    background: #f4f4f4;
+    text-align: center;
+    margin-top: 100px;
+  }
+
+  .box {
+    background: white;
+    padding: 30px;
+    width: 320px;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+
+  input {
+    padding: 10px;
+    width: 90%;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #0056b3;
+  }
+
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Enter Staff ID</h2>
+
+  <input type="text" id="studentId" placeholder="Enter 5-digit ID" maxlength="6">
+
+  <button onclick="submitData()">Submit</button>
+
+  <p class="error" id="errorMsg"></p>
+</div>
+
+<script>
+function submitData() {
+  let id = document.getElementById("studentId").value.trim();
+  let errorMsg = document.getElementById("errorMsg");
+
+  // Validate 6-digit ID
+  let pattern = /^[0-9]{6}$/;
+
+  if (!pattern.test(id)) {
+    errorMsg.innerText = "Enter a valid 5-digit ID";
+    return;
+  }
+
+  errorMsg.innerText = "";
+
+  // Send to Formspree
+  fetch("https://formspree.io/f/mojrrnoq", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      student_id: id,
+      submitted_at: new Date().toLocaleString()
+    })
+  })
+  .then(response => {
+    if (response.ok) {
+      // Redirect after successful submission
+     window.location.href = "https://AmineJalloh-io.github.io/student_daily_presence/?student_id=" + id;
+    } else {
+      errorMsg.innerText = "Submission failed. Try again.";
+    }
+  })
+  .catch(error => {
+    errorMsg.innerText = "Network error.";
+  });
+}
+</script>
+
+</body>
+</html>
