@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Staff Access</title>
+<title>Student Access</title>
 
 <style>
   body {
@@ -46,15 +45,20 @@
     color: red;
     margin-top: 10px;
   }
+
+  .success {
+    color: green;
+    margin-top: 10px;
+  }
 </style>
 </head>
 
 <body>
 
 <div class="box">
-  <h2>Enter Staff ID</h2>
+  <h2>Enter Student ID</h2>
 
-  <input type="text" id="studentId" placeholder="Enter 5-digit ID" maxlength="6">
+  <input type="text" id="studentId" placeholder="Enter 6-digit ID" maxlength="6">
 
   <button onclick="submitData()">Submit</button>
 
@@ -62,41 +66,75 @@
 </div>
 
 <script>
+// Key prefix for localStorage
+const STORAGE_PREFIX = "student_submit_";
+
+function getLastSubmitTime(studentId) {
+  const key = STORAGE_PREFIX + studentId;
+  const stored = localStorage.getItem(key);
+  if (!stored) return null;
+  return parseInt(stored, 10); // timestamp in milliseconds
+}
+
+function setLastSubmitTime(studentId) {
+  const key = STORAGE_PREFIX + studentId;
+  localStorage.setItem(key, Date.now());
+}
+
+function isWithin24Hours(lastTime) {
+  if (!lastTime) return false;
+  const now = Date.now();
+  const hoursDiff = (now - lastTime) / (1000 * 60 * 60);
+  return hoursDiff < 24;
+}
+
 function submitData() {
   let id = document.getElementById("studentId").value.trim();
   let errorMsg = document.getElementById("errorMsg");
 
   // Validate 6-digit ID
   let pattern = /^[0-9]{6}$/;
-
   if (!pattern.test(id)) {
-    errorMsg.innerText = "Enter a valid 5-digit ID";
+    errorMsg.innerText = "Enter a valid 6-digit ID";
+    errorMsg.style.color = "red";
+    return;
+  }
+
+  // Check 24-hour limit
+  const lastSubmit = getLastSubmitTime(id);
+  if (isWithin24Hours(lastSubmit)) {
+    const hoursRemaining = 24 - ((Date.now() - lastSubmit) / (1000 * 60 * 60));
+    const hoursInt = Math.ceil(hoursRemaining);
+    errorMsg.innerText = `This ID has already been used recently. Please wait ${hoursInt} hour(s) before submitting again.`;
+    errorMsg.style.color = "red";
     return;
   }
 
   errorMsg.innerText = "";
-
+  
   // Send to Formspree
-  fetch("https://formspree.io/f/mojrrnoq", {
+  let formData = new FormData();
+  formData.append("student_id", id);
+  formData.append("submitted_at", new Date().toLocaleString());
+
+  fetch("https://formspree.io/f/xzzekvlr", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      student_id: id,
-      submitted_at: new Date().toLocaleString()
-    })
+    body: formData
   })
   .then(response => {
     if (response.ok) {
+      // Record successful submission timestamp
+      setLastSubmitTime(id);
       // Redirect after successful submission
-     window.location.href = "https://AmineJalloh-io.github.io/student_daily_presence/?student_id=" + id;
+      window.location.href = "https://AmineJalloh-io.github.io/student_daily_presence/?student_id=" + id;
     } else {
-      errorMsg.innerText = "Submission failed. Try again.";
+      errorMsg.innerText = `Submission failed (status ${response.status}). Try again.`;
+      errorMsg.style.color = "red";
     }
   })
   .catch(error => {
-    errorMsg.innerText = "Network error.";
+    errorMsg.innerText = "Network error: " + error.message;
+    errorMsg.style.color = "red";
   });
 }
 </script>
