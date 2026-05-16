@@ -1,143 +1,468 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Student Access</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Identifyer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<style>
-  body {
-    font-family: Arial;
-    background: #f4f4f4;
-    text-align: center;
-    margin-top: 100px;
-  }
+    body {
+      background: linear-gradient(145deg, #e9f0fc 0%, #d9e2f0 100%);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
 
-  .box {
-    background: white;
-    padding: 30px;
-    width: 320px;
-    margin: auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  }
+    /* modern glass card */
+    .card {
+      max-width: 560px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 2rem 2rem 2.2rem;
+      transition: transform 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
 
-  input {
-    padding: 10px;
-    width: 90%;
-    margin-top: 10px;
-    font-size: 16px;
-  }
+    .card:hover {
+      transform: translateY(-3px);
+    }
 
-  button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #1E2F5E, #2c3e6d);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
 
-  button:hover {
-    background: #0056b3;
-  }
+    .subhead {
+      color: #4a5b7a;
+      font-weight: 400;
+      font-size: 0.95rem;
+      border-left: 3px solid #2c7da0;
+      padding-left: 0.75rem;
+      margin-bottom: 1.8rem;
+      margin-top: 0.25rem;
+    }
 
-  .error {
-    color: red;
-    margin-top: 10px;
-  }
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
 
-  .success {
-    color: green;
-    margin-top: 10px;
-  }
-</style>
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1e2f4b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0.6rem;
+    }
+
+    .badge {
+      background: #eef2ff;
+      color: #1f4a6e;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.2rem 0.6rem;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem 1rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 1.4rem;
+      transition: all 0.2s;
+      outline: none;
+      color: #0a2a44;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    input:focus {
+      border-color: #2c7da0;
+      box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+    }
+
+    input.error-input {
+      border-color: #e53e3e;
+      background-color: #fff5f5;
+    }
+
+    /* digit helper */
+    .digit-hint {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: #5e6f8d;
+    }
+
+    .counter {
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .error-msg {
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      margin-top: 0.6rem;
+      display: inline-block;
+      width: auto;
+      font-weight: 500;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(105deg, #1f4a6e, #143450);
+      border: none;
+      padding: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      border-radius: 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 14px -6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: linear-gradient(105deg, #0f3b58, #0e2a45);
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px -4px rgba(0,0,0,0.2);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .info-note {
+      margin-top: 1.8rem;
+      background: #f0f4fa;
+      border-radius: 1.2rem;
+      padding: 0.8rem 1rem;
+      font-size: 0.7rem;
+      color: #2c3e66;
+      text-align: center;
+      border: 1px solid #e2edf7;
+    }
+
+    .info-note code {
+      background: #e9edf2;
+      padding: 0.2rem 0.4rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #134b73;
+    }
+
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 1.2rem;
+      color: #59748f;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      input {
+        font-size: 1rem;
+        padding: 0.85rem;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="box">
-  <h2>Enter Student ID</h2>
+<div class="card">
+  <h1>🔐 Student Entry</h1>
+  <div class="subhead">Please enter the 5 Digits on your ID</div>
 
-  <input type="text" id="studentId" placeholder="Enter 6-digit ID" maxlength="6">
+  <form id="serialForm" novalidate>
+    <div class="input-group">
+      <label>
+        <span>📟 S/N</span>
+        <span class="badge">required • 5 digits</span>
+      </label>
+      <div class="input-wrapper">
+        <input type="text" 
+               id="serialInput" 
+               name="serial_number" 
+               maxlength="5" 
+               inputmode="numeric" 
+               autocomplete="off"
+               placeholder="●●●●●"
+               aria-label="5-digit serial number"
+               required>
+      </div>
+      <div class="digit-hint">
+        <span>🔢 exactly 5 numeric digits</span>
+        <span class="counter" id="digitCounter">0 / 5</span>
+      </div>
+      <div id="errorMessage" class="error-msg" style="display: none;"></div>
+    </div>
 
-  <button onclick="submitData()">Submit</button>
+    <button type="submit" id="submitBtn" class="btn-submit">
+      <span>✓ Verify & send</span>
+    </button>
+  </form>
 
-  <p class="error" id="errorMsg"></p>
+  <div class="info-note">
+    ⚙️ <strong>Note:</strong> Double filling this form a day is prohibited.<br>
+    🔄 After successful submission, you’ll be redirected to the<strong> Daily Presence Form</strong>.
+    <br><span style="font-size:0.65rem">✨ Thank you <code> for your understanding </code> support <code> and </code> loyalty.</span>
+  </div>
+  <footer>
+    🔒 5‑digit validation • data sent to your Formspree account
+  </footer>
 </div>
 
 <script>
-// Key prefix for localStorage
-const STORAGE_PREFIX = "student_submit_";
-
-function getLastSubmitTime(studentId) {
-  const key = STORAGE_PREFIX + studentId;
-  const stored = localStorage.getItem(key);
-  if (!stored) return null;
-  return parseInt(stored, 10); // timestamp in milliseconds
-}
-
-function setLastSubmitTime(studentId) {
-  const key = STORAGE_PREFIX + studentId;
-  localStorage.setItem(key, Date.now());
-}
-
-function isWithin24Hours(lastTime) {
-  if (!lastTime) return false;
-  const now = Date.now();
-  const hoursDiff = (now - lastTime) / (1000 * 60 * 60);
-  return hoursDiff < 24;
-}
-
-function submitData() {
-  let id = document.getElementById("studentId").value.trim();
-  let errorMsg = document.getElementById("errorMsg");
-
-  // Validate 6-digit ID
-  let pattern = /^[0-9]{6}$/;
-  if (!pattern.test(id)) {
-    errorMsg.innerText = "Enter a valid 6-digit ID";
-    errorMsg.style.color = "red";
-    return;
-  }
-
-  // Check 24-hour limit
-  const lastSubmit = getLastSubmitTime(id);
-  if (isWithin24Hours(lastSubmit)) {
-    const hoursRemaining = 24 - ((Date.now() - lastSubmit) / (1000 * 60 * 60));
-    const hoursInt = Math.ceil(hoursRemaining);
-    errorMsg.innerText = `This ID has already been used recently. Please wait ${hoursInt} hour(s) before submitting again.`;
-    errorMsg.style.color = "red";
-    return;
-  }
-
-  errorMsg.innerText = "";
+  // ======================== 🔧 CONFIGURATION (EDIT THESE) =========================
+  // 👇 Replace with your actual Formspree endpoint: https://formspree.io/f/{your_form_id}
+  const FORMPREE_ENDPOINT = 'https://formspree.io/f/mojrrnoq';
   
-  // Send to Formspree
-  let formData = new FormData();
-  formData.append("student_id", id);
-  formData.append("submitted_at", new Date().toLocaleString());
+  // 👇 Redirect to this webpage after the serial number is successfully forwarded
+  //    Change to your own thank-you page or external URL
+  const REDIRECT_URL = 'https://aminejalloh-io.github.io/student_daily_presence/';
+  
+  // ===============================================================================
+  // DOM Elements
+  const form = document.getElementById('serialForm');
+  const serialInput = document.getElementById('serialInput');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorDiv = document.getElementById('errorMessage');
+  const digitCounter = document.getElementById('digitCounter');
 
-  fetch("https://formspree.io/f/xzzekvlr", {
-    method: "POST",
-    body: formData
-  })
-  .then(response => {
-    if (response.ok) {
-      // Record successful submission timestamp
-      setLastSubmitTime(id);
-      // Redirect after successful submission
-      window.location.href = "https://AmineJalloh-io.github.io/student_daily_presence/?student_id=" + id;
-    } else {
-      errorMsg.innerText = `Submission failed (status ${response.status}). Try again.`;
-      errorMsg.style.color = "red";
+  // Helper: show inline error message
+  function showError(msg) {
+    errorDiv.textContent = msg;
+    errorDiv.style.display = 'block';
+    serialInput.classList.add('error-input');
+  }
+
+  function hideError() {
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+    serialInput.classList.remove('error-input');
+  }
+
+  // Real-time digit counter & sanitize (allow only digits, max 5)
+  function sanitizeAndUpdate() {
+    let raw = serialInput.value;
+    // remove any non-digit characters
+    let digitsOnly = raw.replace(/\D/g, '');
+    if (digitsOnly.length > 5) digitsOnly = digitsOnly.slice(0, 5);
+    if (raw !== digitsOnly) {
+      serialInput.value = digitsOnly;
     }
-  })
-  .catch(error => {
-    errorMsg.innerText = "Network error: " + error.message;
-    errorMsg.style.color = "red";
-  });
-}
-</script>
+    // update counter
+    digitCounter.textContent = `${digitsOnly.length} / 5`;
+    
+    // live UI: if becomes valid, hide error on input (clean feedback)
+    if (digitsOnly.length === 5 && /^\d{5}$/.test(digitsOnly)) {
+      hideError();
+    }
+  }
 
+  // Validate input strictly: returns boolean and shows error if invalid
+  function validateSerialNumber(value) {
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      showError('❌ Serial number is required.');
+      return false;
+    }
+    const digitsRegex = /^\d{5}$/;
+    if (!digitsRegex.test(trimmed)) {
+      if (trimmed.length !== 5) {
+        showError(`📛 Serial must contain exactly 5 digits. Currently ${trimmed.length} digit(s).`);
+      } else if (/[^\d]/.test(trimmed)) {
+        showError('🔢 Only numeric digits (0-9) allowed. No letters or symbols.');
+      } else {
+        showError('⚠️ Please enter a valid 5-digit numeric serial.');
+      }
+      return false;
+    }
+    hideError();
+    return true;
+  }
+
+  // Send data to Formspree using fetch (URL encoded) then redirect on success
+  async function submitToFormspree(serialValue) {
+    const body = new URLSearchParams();
+    body.append('serial_number', serialValue);
+    
+    try {
+      const response = await fetch(FORMPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        body: body.toString()
+      });
+
+      if (response.ok) {
+        return { success: true };
+      } else {
+        let errorText = `Formspree responded with status ${response.status}`;
+        try {
+          const data = await response.json();
+          if (data && data.error) errorText = data.error;
+        } catch(e) { /* ignore */ }
+        return { success: false, error: errorText };
+      }
+    } catch (networkErr) {
+      console.error('Network error:', networkErr);
+      return { success: false, error: 'Network error — check connection & Formspree endpoint.' };
+    }
+  }
+
+  // loading state management
+  let isSubmitting = false;
+
+  function setLoading(loading) {
+    isSubmitting = loading;
+    if (loading) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Sending to Formspree...';
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<span>✓ Verify & send</span>';
+    }
+  }
+
+  // Main submit handler
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (isSubmitting) return;
+
+    // get current sanitized value (ensure clean digits)
+    const rawValue = serialInput.value;
+    const finalDigits = rawValue.replace(/\D/g, '').slice(0,5);
+    
+    // validate (strict 5 digit numeric)
+    if (!validateSerialNumber(finalDigits)) {
+      serialInput.focus();
+      return;
+    }
+
+    const serialNumber = finalDigits;
+    
+    setLoading(true);
+    hideError();
+
+    const result = await submitToFormspree(serialNumber);
+
+    if (result.success) {
+      // small delay for better UX
+      setTimeout(() => {
+        window.location.href = REDIRECT_URL;
+      }, 180);
+    } else {
+      setLoading(false);
+      let errorMsg = result.error || 'Submission failed. Please verify Formspree endpoint.';
+      showError(`⚠️ ${errorMsg}`);
+      serialInput.focus();
+    }
+  });
+
+  // Real-time input sanitization + instant counter + hide errors on valid edit
+  serialInput.addEventListener('input', () => {
+    sanitizeAndUpdate();
+    const currentVal = serialInput.value;
+    if (currentVal.length === 5 && /^\d{5}$/.test(currentVal)) {
+      hideError();
+    }
+  });
+
+  // paste event to ensure full sanitization
+  serialInput.addEventListener('paste', () => {
+    setTimeout(() => {
+      sanitizeAndUpdate();
+      const afterPaste = serialInput.value;
+      if (afterPaste.length === 5 && /^\d{5}$/.test(afterPaste)) {
+        hideError();
+      }
+    }, 10);
+  });
+
+  // enforce numeric key filtering (optional: block non-digit before input)
+  serialInput.addEventListener('keydown', (e) => {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowedKeys.includes(e.key)) return;
+    if (!/^\d$/.test(e.key) && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+    }
+  });
+
+  // initial sanitize & counter
+  sanitizeAndUpdate();
+
+  // Optional console hints (no action needed)
+  if (FORMPREE_ENDPOINT === 'https://formspree.io/f/mojrrnoq') {
+    console.log('[Serial Form] Using provided Formspree endpoint.');
+  }
+  if (REDIRECT_URL === 'https://aminejalloh-io.github.io/student_daily_presence/') {
+    console.log('[Serial Form] Redirect URL is set.');
+  }
+</script>
 </body>
 </html>
